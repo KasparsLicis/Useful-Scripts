@@ -1,18 +1,22 @@
-#usually only smb module is missing, we can install it by pip install pysmb
+###Comment area
+# usually only smb module is missing, we can install it by pip install pysmb
+
 import os
 import shutil
 import socket
 from smb.SMBConnection import SMBConnection
 import sys
 
-##Variable section
-USER_ID="user_name"
-PASSWORD="user_password"
-DOMAIN_NAME="server_domain_name"
+###
+#Configuration are
+
+USER_ID="username"
+PASSWORD="pasword"
+DOMAIN_NAME="domainname"
 CLIENT_MACHINE_NAME = "localpcname"
-DHCP_SHARE_NAME="DHCP_logs"
-TMP_FOLDER="/tmp/dhcp_tmp"
-FIN_FOLDER="/root/Desktop/DHCP_33"
+DHCP_SHARE_NAME="DHCP_logs" #DHCP server share name
+TMP_FOLDER="" #where to store temp results
+FIN_FOLDER="" # where to store final results
 servers = ['server1','server2', 'server3', 'server4']
 files=['DhcpSrvLog-Fri.log','DhcpSrvLog-Mon.log', 'DhcpSrvLog-Sat.log','DhcpSrvLog-Sun.log','DhcpSrvLog-Thu.log','DhcpSrvLog-Tue.log','DhcpSrvLog-Wed.log']
 
@@ -21,10 +25,11 @@ def errorHandlerAndExit(error):
     sys.exc_info()[0]
     sys.exit(0)
 
+##Added try, except here. If we can create folder then we can create files in the folders as well
 def createFolderStructure(folder):
     try:
-	    shutil.rmtree(folder)
-	except:
+        shutil.rmtree(folder)
+    except:
 	    print 'Folder does not exist, skipping ..'+folder
     try:
         os.makedirs(folder)
@@ -56,12 +61,13 @@ def connectAndDownloadLogs(x):
 
 def parseLogsAndSaveResult():
     f = open(os.path.join(FIN_FOLDER, 'result.txt'), 'a+')
-##can crash if not all week logs are awailable in folder
+##can crash if not all week logs are available in folder
     for d in files:
         for line in open(os.path.join(TMP_FOLDER, d), 'r'):
-            if ('DNS Update Request' in line):
-                fields = line.split(',')
-                f.write(fields[1] + ',' + fields[2] + ',' + fields[4] + ',' + fields[5] + '\n')
+            #if ('DNS Update Request' in line):
+            fields = line.split(',')
+               # f.write(fields[1] + ',' + fields[2] + ',' + fields[4] + ',' + fields[5] + '\n')
+            f.write(line) 
     f.close()
 
 def main():
