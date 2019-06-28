@@ -1,0 +1,5 @@
+#install python module
+apt-get install python-pyftpdlib
+
+#run simple ftp
+python -m pyftpdlib -p 21 -u $username -P $pass
